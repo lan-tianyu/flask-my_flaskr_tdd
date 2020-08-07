@@ -4,14 +4,17 @@ from flask import (Flask, request, session, redirect, url_for, abort,
                    render_template, flash, jsonify)
 from flask_sqlalchemy import SQLAlchemy
 
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 SECRET_KEY = b'\x14l\x86x\x0eD\x9f\xa8\x03\x07S\x1b9G\xe4\x16'
 USERNAME = 'admin'
 PASSWORD = 'admin'
-SQLAlCHEMY_DATABASE_URI = os.getenv(
-    "DATABASE_URL", f'sqlite:///{os.path.join(basedir, "flaskr.db")}')
+SQLALCHEMY_DATABASE_URI = os.getenv(
+    "DATABASE_URL", 'sqlite:///{}'.format(os.path.join(basedir, "flaskr.db")))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+print('SQLALCHEMY_DATABASE_URI', SQLALCHEMY_DATABASE_URI)
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -19,15 +22,15 @@ db = SQLAlchemy(app)
 
 import models
 
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if not session.get('logged_in'):
             flash("Please login")
             return jsonify({"status": 0, "message": "Please login"}), 401
-    return 
+        return f(*args, **kwargs)
 
+    return decorated_function
 
 
 @app.route("/")
@@ -36,7 +39,7 @@ def index():
     return render_template('index.html', entries=entries)
 
 
-@app.route("/add", methods=['POST']
+@app.route("/add", methods=['POST'])
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
@@ -90,7 +93,6 @@ def search():
     if query:
         return render_template("search.html", entries=entries, query=query)
     return render_template('search.html')
-
 
 
 if __name__ == '__main__':

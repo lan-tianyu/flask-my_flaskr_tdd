@@ -1,2 +1,5 @@
+*.db
+*.pyc
 venv/
 .pytest*
+__pycache__/*

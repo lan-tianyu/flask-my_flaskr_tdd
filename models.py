@@ -1,7 +1,7 @@
 from app import db
 
 
-class Flaskr(db.model):
+class Flaskr(db.Model):
     __tablename__ = 'flaskr'
 
     post_id = db.Column(db.Integer, primary_key=True)
@@ -13,5 +13,5 @@ class Flaskr(db.model):
         self.content = content
 
     def __repr__(self):
-        return f"<title {self.body}>"
+        return "<title {self.body}>"
 
